@@ -14,6 +14,8 @@
 #define RECV_ADDR "192.168.23.98"
 #define RECV_PORT 22224
 #define RES_LEN 60000
+#define INTERVAL 0.1 // modified. The unit is second. before 0.01 2024/05/09 before 0.001:2024/06/22
+#define NUMMONITORING 1200 // modified. before 12000:2024/05/09 before 12000:2024/06/22
 
 char res[RES_LEN];
 
@@ -45,7 +47,7 @@ int main(int argc, char **argv) {
         perror("connect");
         exit(1);
     }
-    struct timespec send_time, recv_time, interval = {.tv_sec = 0, .tv_nsec = 5000000};
+    struct timespec send_time, recv_time, interval = {.tv_sec = 0, .tv_nsec = INTERVAL * 1000000000};
     struct tm *time;
     FILE *fp = fopen(argv[1], "w");
     if (send(sd, request, strlen(request), 0) < 0) {
@@ -60,7 +62,7 @@ int main(int argc, char **argv) {
     printf("%s", res);
 
     // close(sd);
-    for (int i = 0; i < 12000; ++i) {
+    for (int i = 0; i < NUMMONITORING; ++i) {
         nanosleep(&interval, NULL);
         printf("i: %d\n", i);
         if ((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -89,10 +91,19 @@ int main(int argc, char **argv) {
         //     printf("%ld ", metric[i]);
         // }
         // printf("\n");
-        fprintf(fp, "%d/%02d/%02d-%02d:%02d:%02d.%ld,%ld.%09ld,%ld\n", time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec, recv_time.tv_nsec / 1000, send_time.tv_sec, send_time.tv_nsec,
-                (recv_time.tv_sec - send_time.tv_sec) * 1000000000L + recv_time.tv_nsec - send_time.tv_nsec);
+
+        /*the unit of elapsed time is micro second*/
+        long elapsed_time = (recv_time.tv_sec - send_time.tv_sec) * 1000000L + (recv_time.tv_nsec - send_time.tv_nsec) / 1000L;
+
+        fprintf(fp, "%d/%02d/%02d-%02d:%02d:%02d.%ld,%ld.%09ld,%ld\n", 
+                time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec, recv_time.tv_nsec / 1000, send_time.tv_sec, send_time.tv_nsec,
+                elapsed_time);
         // print_metrics(fp, res);
-        printf("%s", res);
+        // printf("%s", res);
+
+        if (i % 100 == 0){
+            printf("message[%d] is sent\n", i);
+        }
         close(sd);
     }
 
