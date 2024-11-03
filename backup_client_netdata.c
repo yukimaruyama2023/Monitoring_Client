@@ -9,14 +9,13 @@
 #include "monitor.h"
 
 #define BUF_SIZE 256
-#define DEST_ADDR "192.168.23.172" //osaka
+#define DEST_ADDR "192.168.23.172"
 #define DEST_PORT 19999
-#define RECV_ADDR "192.168.23.98" // sendai
+#define RECV_ADDR "192.168.23.98"
 #define RECV_PORT 22224
 #define RES_LEN 60000
-// #define INTERVAL 0.1 // modified. The unit is second. before 0.01 2024/05/09 before 0.001:2024/06/22
-// #define NUMMONITORING 1200 // modified. before 12000:2024/05/09 before 12000:2024/06/22
-#define NUMMONITORING_BASELINE 120
+#define INTERVAL 0.1 // modified. The unit is second. before 0.01 2024/05/09 before 0.001:2024/06/22
+#define NUMMONITORING 1200 // modified. before 12000:2024/05/09 before 12000:2024/06/22
 
 char res[RES_LEN];
 
@@ -26,11 +25,6 @@ const char *request =
     "\r\n";
 
 int main(int argc, char **argv) {
-    float INTERVAL;
-    int NUMMONITORING;
-    printf("Enter interval (unit is second): ");
-    scanf("%f", &INTERVAL);
-    NUMMONITORING = NUMMONITORING_BASELINE / INTERVAL;
     if (argc == 1) {
         printf("usage: ./manager result_filename\n");
         return 0;
@@ -53,15 +47,7 @@ int main(int argc, char **argv) {
         perror("connect");
         exit(1);
     }
-    struct timespec send_time, recv_time; 
-    struct timespec interval;
-    if (INTERVAL == 1) {
-        interval.tv_sec = INTERVAL;
-        interval.tv_nsec = 0;
-    } else {
-        interval.tv_sec = 0;
-        interval.tv_nsec = INTERVAL * 1000000000;
-    }
+    struct timespec send_time, recv_time, interval = {.tv_sec = 0, .tv_nsec = INTERVAL * 1000000000};
     struct tm *time;
     FILE *fp = fopen(argv[1], "w");
     if (send(sd, request, strlen(request), 0) < 0) {
@@ -73,12 +59,12 @@ int main(int argc, char **argv) {
         perror("recv");
         exit(1);
     }
-    // printf("%s", res);
+    printf("%s", res);
 
     // close(sd);
     for (int i = 0; i < NUMMONITORING; ++i) {
         nanosleep(&interval, NULL);
-        // printf("i: %d\n", i);
+        printf("i: %d\n", i);
         if ((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
             perror("socket");
             exit(1);
@@ -115,7 +101,7 @@ int main(int argc, char **argv) {
         // print_metrics(fp, res);
         // printf("%s", res);
 
-        if (i % (int)(10 / INTERVAL) == 0){
+        if (i % 100 == 0){
             printf("message[%d] is sent\n", i);
         }
         close(sd);
