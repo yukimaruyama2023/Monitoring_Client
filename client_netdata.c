@@ -6,8 +6,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "monitor.h"
-
 #define BUF_SIZE 256
 #define DEST_ADDR "192.168.23.172" // osaka
 #define DEST_PORT 19999
@@ -26,7 +24,7 @@ const char *request_system =
     "Host: " DEST_ADDR ":19999\r\n"
     "\r\n";
 const char *request_user =
-    "GET /api/v1/allmetrics?format=shell&filter=redis.* HTTP/1.1\r\n"
+    "GET /api/v1/allmetrics?format=shell&filter=memcached.* HTTP/1.1\r\n"
     "Host: " DEST_ADDR ":19999\r\n"
     "\r\n";
 
