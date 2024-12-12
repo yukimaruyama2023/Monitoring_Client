@@ -10,7 +10,8 @@
 #define DEST_PORT 22222
 #define RECV_ADDR "10.10.10.2" // sendai
 #define RECV_PORT 22222
-#define NUMMONITORING_BASELINE 120
+#define NUMMONITORING_BASELINE 1200
+#define METRICS_SIZE 256
 
 int main(int argc, char **argv) {
   struct sockaddr_in send_addr, recv_addr;
@@ -59,10 +60,7 @@ int main(int argc, char **argv) {
   if (argc != 2)
     puts("Enter result file name");
   FILE *fp = fopen(argv[1], "w");
-  // long init_data[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-  // long metrics[10];
-  // long old_metrics[10];
-  long metrics;
+  char metrics[METRICS_SIZE];
 
   // store first data into old_metrics[]
   if (send(send_sd, &metrics, sizeof(metrics), 0) < 0) {
@@ -89,14 +87,14 @@ int main(int argc, char **argv) {
   // start monitoring for NUMMONITORING times
   for (int i = 0; i < NUMMONITORING; i++) {
     nanosleep(&interval, NULL);
-    if (send(send_sd, &metrics, sizeof(metrics), 0) < 0) {
+    if (send(send_sd, metrics, METRICS_SIZE, 0) < 0) {
       perror("send");
       exit(1);
     }
 
     timespec_get(&send_time, TIME_UTC);
 
-    if (recv(recv_sd, &metrics, sizeof(metrics), 0) < 0) {
+    if (recv(recv_sd, metrics, METRICS_SIZE, 0) < 0) {
       perror("recv");
       exit(1);
     }
@@ -104,15 +102,6 @@ int main(int argc, char **argv) {
     timespec_get(&recv_time, TIME_UTC);
 
     time = localtime(&recv_time.tv_sec);
-    /*the unit of elapsed time is micro second*/
-    // long elapsed_time = (recv_time.tv_sec - send_time.tv_sec) * 1000000L +
-    //                     (recv_time.tv_nsec - send_time.tv_nsec) / 1000L;
-    //
-    // fprintf(fp, "%d/%02d/%02d-%02d:%02d:%02d.%ld,", time->tm_year + 1900,
-    //         time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min,
-    //         time->tm_sec, recv_time.tv_nsec / 1000);
-    // fprintf(fp, "%ld.%09ld,%ld,", send_time.tv_sec, send_time.tv_nsec,
-    //         elapsed_time);
     long sec_diff = recv_time.tv_sec - send_time.tv_sec;
     long nsec_diff = recv_time.tv_nsec - send_time.tv_nsec;
 
@@ -131,7 +120,9 @@ int main(int argc, char **argv) {
     fprintf(fp, "%ld.%09ld,%.2f,", send_time.tv_sec, send_time.tv_nsec,
             elapsed_time);
 
-    fprintf(fp, "%lx\n", metrics);
+    for (int i = 0; i < METRICS_SIZE; i++) {
+      printf("%c ", metrics[i]);
+    }
 
     if (i % (int)(10 / INTERVAL) == 0) {
       printf("message[%d] is sent\n", i);

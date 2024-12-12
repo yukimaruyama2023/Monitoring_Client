@@ -12,10 +12,7 @@
 #define RECV_ADDR "192.168.23.98" // sendai
 #define RECV_PORT 22224
 #define RES_LEN 60000
-// #define INTERVAL 0.1 // modified. The unit is second. before 0.01 2024/05/09
-// before 0.001:2024/06/22 #define NUMMONITORING 1200 // modified. before
-// 12000:2024/05/09 before 12000:2024/06/22
-#define NUMMONITORING_BASELINE 120
+#define NUMMONITORING_BASELINE 1200
 
 char res[RES_LEN];
 
