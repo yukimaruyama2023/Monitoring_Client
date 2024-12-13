@@ -11,7 +11,7 @@
 #define RECV_ADDR "10.10.10.2" // sendai
 #define RECV_PORT 22222
 #define NUMMONITORING_BASELINE 1200
-#define METRICS_SIZE 256
+#define METRICS_SIZE 128
 
 int main(int argc, char **argv) {
   struct sockaddr_in send_addr, recv_addr;
@@ -121,8 +121,9 @@ int main(int argc, char **argv) {
             elapsed_time);
 
     for (int i = 0; i < METRICS_SIZE; i++) {
-      printf("%c ", metrics[i]);
+      printf("%c", metrics[i]);
     }
+    puts("");
 
     if (i % (int)(10 / INTERVAL) == 0) {
       printf("message[%d] is sent\n", i);
