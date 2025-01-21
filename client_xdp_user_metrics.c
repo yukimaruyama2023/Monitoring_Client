@@ -11,7 +11,9 @@
 #define RECV_ADDR "10.10.10.2" // sendai
 #define RECV_PORT 22222
 #define NUMMONITORING_BASELINE 1200
-#define METRICS_SIZE 256
+#define NR_MEMCACHED 2
+#define METRICS_SIZE 656 * NR_MEMCACHED
+// #define METRICS_SIZE 700 * NR_MEMCACHED
 
 int main(int argc, char **argv) {
   struct sockaddr_in send_addr, recv_addr;
