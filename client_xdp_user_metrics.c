@@ -6,14 +6,14 @@
 #include <time.h>
 #include <unistd.h>
 
-#define DEST_ADDR "10.10.10.1" // osaka
+#define DEST_ADDR "10.0.0.1" // hamatora
 #define DEST_PORT 22222
-#define RECV_ADDR "10.10.10.2" // sendai
+#define RECV_ADDR "10.0.0.2" // sendai
 #define RECV_PORT 22222
 #define NUMMONITORING_BASELINE 1200
 #define NR_MEMCACHED 2
 #define METRICS_SIZE 656 * NR_MEMCACHED
-// #define METRICS_SIZE 700 * NR_MEMCACHED
+// #define METRICS_SIZE 3030 * NR_MEMCACHED
 
 int main(int argc, char **argv) {
   struct sockaddr_in send_addr, recv_addr;
