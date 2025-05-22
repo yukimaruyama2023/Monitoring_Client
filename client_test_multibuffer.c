@@ -10,8 +10,9 @@
 #define DEST_PORT 22222
 #define RECV_ADDR "10.0.0.2" // sendai
 #define RECV_PORT 22222
-#define NUMMONITORING_BASELINE 1200
-#define BUFFER_SIZE 8000
+#define NUMMONITORING_BASELINE 120
+// #define NUMMONITORING_BASELINE 10
+#define BUFFER_SIZE 6900
 
 int main(int argc, char **argv) {
   struct sockaddr_in send_addr, recv_addr;
@@ -117,7 +118,7 @@ int main(int argc, char **argv) {
             time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min,
             time->tm_sec, recv_time.tv_nsec / 1000);
 
-    fprintf(fp, "%ld.%09ld,%.2f,", send_time.tv_sec, send_time.tv_nsec,
+    fprintf(fp, "%ld.%09ld,%.2f\n", send_time.tv_sec, send_time.tv_nsec,
             elapsed_time);
 
     // for (int i = 0; i < BUFFER_SIZE; i++) {

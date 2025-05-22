@@ -7,12 +7,12 @@
 #include <unistd.h>
 
 #define BUF_SIZE 256
-#define DEST_ADDR "192.168.23.172" // osaka
+#define DEST_ADDR "10.0.0.1" // hamatora
 #define DEST_PORT 19999
-#define RECV_ADDR "192.168.23.98" // sendai
+#define RECV_ADDR "10.0.0.2" // sendai
 #define RECV_PORT 22224
 #define RES_LEN 60000
-#define NUMMONITORING_BASELINE 1200
+#define NUMMONITORING_BASELINE 120
 
 char res[RES_LEN];
 
