@@ -10,9 +10,11 @@
 #define DEST_PORT 22222
 #define RECV_ADDR "10.0.0.2" // sendai
 #define RECV_PORT 22222
-#define NUMMONITORING_BASELINE 120
-// #define NUMMONITORING_BASELINE 10
-#define BUFFER_SIZE 6900
+#define NUMMONITORING_BASELINE 60
+// #define NUMMONITORING_BASELINE 300
+// #define BUFFER_SIZE 6900
+#define BUFFER_SIZE 6570
+// #define BUFFER_SIZE 60000
 
 int main(int argc, char **argv) {
   struct sockaddr_in send_addr, recv_addr;
