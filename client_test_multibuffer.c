@@ -14,7 +14,7 @@
 // #define NUMMONITORING_BASELINE 300
 // #define BUFFER_SIZE 6900
 #define BUFFER_SIZE 6570
-// #define BUFFER_SIZE 60000
+// #define BUFFER_SIZE 1500
 
 int main(int argc, char **argv) {
   struct sockaddr_in send_addr, recv_addr;
@@ -89,6 +89,7 @@ int main(int argc, char **argv) {
 
   // start monitoring for NUMMONITORING times
   for (int i = 0; i < NUMMONITORING; i++) {
+    memset(metrics, 0, BUFFER_SIZE);
     nanosleep(&interval, NULL);
     if (send(send_sd, metrics, BUFFER_SIZE, 0) < 0) {
       perror("send");
